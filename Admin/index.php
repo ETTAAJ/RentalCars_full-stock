@@ -50,26 +50,24 @@ $csrf = $_SESSION['csrf_token'];
     <h2 class="mb-0 text-2xl font-bold">Car Management</h2>
     <div>
       <a href="create.php" class="btn btn-success me-2">Add New Car</a>
+      <a href="change_password.php" class="btn btn-warning me-2">
+        Change Password
+      </a>
       <a href="logout.php" class="btn btn-outline-danger">Logout</a>
     </div>
   </div>
 
   <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
     <?php
-    /* -------------------------------------------------
-       4. SECURE IMAGE URL BUILDER (FIXED)
-       ------------------------------------------------- */
     function getCarImage(string $filename): string {
         if (empty($filename)) return '';
-
-        $safe = basename($filename);  // Prevent ../../
+        $safe = basename($filename);
         $path = '../uploads/' . $safe;
-        $full = __DIR__ . '/' . $path;  // Full server path
-
+        $full = __DIR__ . '/' . $path;
         if (file_exists($full)) {
             return $path . '?v=' . filemtime($full);
         }
-        return ''; // Let placeholder show
+        return '';
     }
 
     $stmt = $pdo->query("SELECT * FROM cars ORDER BY id");
