@@ -28,80 +28,107 @@ function carImageUrl($filename) {
 ?>
 <?php include 'header.php'; ?>
 
-<main class="max-w-4xl mx-auto px-4 py-12">
-  <h1 class="text-3xl font-bold text-center mb-8 text-gold">Complete Your Booking</h1>
+<main class="max-w-7xl mx-auto px-4 py-12">
+  <h1 class="text-3xl sm:text-4xl font-extrabold text-center mb-12 text-gray-900" data-aos="fade-up">
+    Complete Your Booking
+  </h1>
 
-  <div class="bg-white rounded-xl shadow-lg p-8">
-    <div class="grid md:grid-cols-2 gap-8 mb-8">
-      <!-- Car Info -->
-      <div data-aos="fade-right">
-        <h3 class="font-semibold text-lg mb-4"><?= htmlspecialchars($car['name']) ?></h3>
+  <div class="grid lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+    <!-- Car Info Card -->
+    <div data-aos="fade-right" data-aos-duration="800">
+      <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-6 h-full flex flex-col">
+        <h3 class="text-xl sm:text-2xl font-extrabold text-gray-800 mb-4 text-center">
+          <?= htmlspecialchars($car['name']) ?>
+        </h3>
 
+        <!-- Car Image (16:9) -->
         <?php
         $imgSrc = carImageUrl($car['image']);
-        $placeholder = 'https://via.placeholder.com/400x200?text=' . urlencode($car['name']);
+        $placeholder = 'https://via.placeholder.com/800x450/cccccc/999999?text=' . urlencode($car['name']);
         $src = $imgSrc ?: $placeholder;
         ?>
-        <img src="<?= $src ?>"
-             alt="<?= htmlspecialchars($car['name']) ?>"
-             class="w-full h-48 object-cover rounded-lg shadow-md"
-             onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'">
+        <div class="relative w-full pt-[56.25%] bg-gray-100 rounded-2xl overflow-hidden shadow-lg mb-5">
+          <img src="<?= $src ?>"
+               alt="<?= htmlspecialchars($car['name']) ?>"
+               class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+               onerror="this.onerror=null; this.src='https://via.placeholder.com/800x450/cccccc/999999?text=No+Image'; 
+                        this.classList.add('object-contain','p-8');">
+        </div>
 
-        <p class="mt-3 text-sm text-gray-600">
-          <span class="font-bold text-gold">MAD<?= number_format($pricePerDay) ?></span>/day
-        </p>
-        <p class="text-xs text-gray-500 mt-1">Minimum <?= $minDays ?> days required</p>
+        <!-- Price + Min Days -->
+        <div class="flex flex-col items-center mt-auto">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-4xl sm:text-5xl font-extrabold text-gray-900">
+              <?= number_format($pricePerDay) ?>
+            </span>
+            <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-gold to-yellow-600 rounded-full shadow-md animate-pulse">
+              <span>MAD</span>
+              <span>/day</span>
+            </span>
+          </div>
+          <p class="text-xs text-gray-500 font-medium">
+            Minimum <strong class="text-gold"><?= $minDays ?> days</strong> required
+          </p>
+        </div>
       </div>
+    </div>
 
-      <!-- Booking Form -->
-      <form id="booking-form" action="booking-process.php" method="POST" class="space-y-6" data-aos="fade-left">
+    <!-- Booking Form Card -->
+    <div data-aos="fade-left" data-aos-duration="800">
+      <form id="booking-form" action="booking-process.php" method="POST" 
+            class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-6 sm:p-8 space-y-6">
+
         <input type="hidden" name="car_id" value="<?= $car['id'] ?>">
 
         <!-- Pickup Date -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Pickup Date</label>
+          <label class="block text-sm font-bold text-gray-700 mb-2">Pickup Date</label>
           <input type="date" name="pickup" id="pickup" required
-                 min="<?= date('Y-m-d') ?>"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition">
+                 class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold focus:border-transparent transition text-sm">
         </div>
 
         <!-- Return Date -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Return Date</label>
+          <label class="block text-sm font-bold text-gray-700 mb-2">Return Date</label>
           <input type="date" name="return" id="return" required
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition">
+                 class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold focus:border-transparent transition text-sm">
           <p id="date-error" class="text-red-600 text-xs mt-1 hidden">
             Return date must be at least <?= $minDays ?> days after pickup.
           </p>
         </div>
 
-        <!-- Total Price (Live) -->
-        <div class="bg-gold/5 p-4 rounded-lg">
-          <p class="text-sm font-medium text-gray-700">Total Price:</p>
-          <p id="total-price" class="text-2xl font-bold text-gold">MAD0</p>
-          <p id="days-count" class="text-sm text-gray-600"></p>
+        <!-- Live Total Price -->
+        <div class="bg-gradient-to-r from-gold/5 to-yellow-50 p-5 rounded-2xl border border-gold/20">
+          <p class="text-sm font-semibold text-gray-700 mb-1">Total Price</p>
+          <p id="total-price" class="text-3xl sm:text-4xl font-extrabold text-gold">MAD0</p>
+          <p id="days-count" class="text-sm text-gray-600 mt-1"></p>
         </div>
 
         <!-- Customer Info -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-          <input type="text" name="name" required placeholder="John Doe"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gold">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <input type="email" name="email" required placeholder="john@example.com"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gold">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-          <input type="tel" name="phone" required placeholder="+212 6 00 00 00 00"
-                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gold">
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
+            <input type="text" name="name" required placeholder="John Doe"
+                   class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+            <input type="email" name="email" required placeholder="john@example.com"
+                   class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold text-sm">
+          </div>
         </div>
 
-        <!-- Submit -->
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-2">Phone</label>
+          <input type="tel" name="phone" required placeholder="+212 6 00 00 00 00"
+                 class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gold text-sm">
+        </div>
+
+        <!-- Submit Button -->
         <button type="submit"
-                class="w-full bg-gold hover:bg-gold-dark text-white font-bold py-4 rounded-xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-600 hover:to-orange-500 
+                       text-white font-bold text-lg py-4 rounded-2xl shadow-xl transition-all duration-300 
+                       transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 id="submit-btn" disabled>
           Confirm Booking
         </button>
@@ -113,9 +140,11 @@ function carImageUrl($filename) {
 <?php include 'footer.php'; ?>
 
 <!-- AOS + JS Logic -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
 <script>
-  AOS.init({ once: true });
+  AOS.init({ once: true, duration: 800, easing: 'ease-out-quart' });
 
   const pickupInput = document.getElementById('pickup');
   const returnInput = document.getElementById('return');
@@ -154,7 +183,7 @@ function carImageUrl($filename) {
     submitBtn.disabled = false;
   }
 
-  // Set minimum return date when pickup changes
+  // Set min return date
   pickupInput.addEventListener('change', () => {
     const minReturn = new Date(pickupInput.value);
     minReturn.setDate(minReturn.getDate() + minDays);
@@ -164,7 +193,7 @@ function carImageUrl($filename) {
 
   returnInput.addEventListener('change', validateDates);
 
-  // Initialize on load
+  // Initialize
   document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     pickupInput.min = today;

@@ -34,13 +34,13 @@ if (!empty($where)) {
 $sql .= " ORDER BY $order";
 
 /* -------------------------------------------------
-   2. renderCarCard()
+   2. renderCarCard() – GLASS + RECT IMAGE + MAD BESIDE /day
    ------------------------------------------------- */
 function renderCarCard($car, $index = 0): string
 {
     $baseImg = !empty($car['image'])
         ? 'uploads/' . basename($car['image'])
-        : 'https://via.placeholder.com/300x200/cccccc/999999?text=' . urlencode($car['name']);
+        : 'https://via.placeholder.com/600x338/cccccc/999999?text=' . urlencode($car['name']);
 
     $cacheBuster = '';
     $fullPath = $_SERVER['DOCUMENT_ROOT'] . '/' . $baseImg;
@@ -52,45 +52,77 @@ function renderCarCard($car, $index = 0): string
     $delay  = 100 + ($index % 8) * 80;
 
     ob_start(); ?>
-    <div data-aos="fade-up" data-aos-delay="<?= $delay ?>" data-aos-duration="600"
-         class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
-        <div class="h-48 bg-gray-200 rounded-t-xl overflow-hidden">
+    <div data-aos="fade-up" data-aos-delay="<?= $delay ?>" data-aos-duration="700"
+         class="group relative bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl 
+                transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] 
+                border border-white/30 flex flex-col h-full">
+
+        <!-- RECTANGULAR RESPONSIVE IMAGE (16:9) -->
+        <div class="relative w-full pt-[56.25%] bg-gray-100 overflow-hidden">
             <img src="<?= htmlspecialchars($imgUrl) ?>"
                  alt="<?= htmlspecialchars($car['name']) ?>"
-                 class="w-full h-full object-cover"
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                 class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/600x338/cccccc/999999?text=No+Image'; 
+                          this.classList.add('object-contain','p-8');">
         </div>
-        <div class="p-5">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2"><?= htmlspecialchars($car['name']) ?></h3>
-            <div class="flex flex-wrap gap-2 text-sm text-gray-600 mb-4">
-                <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
-                    <?= (int)$car['seats'] ?> Seats
-                </span>
-                <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg>
-                    <?= (int)$car['bags'] ?> Bags
-                </span>
-            </div>
-            <div class="flex justify-between text-sm text-gray-500 mb-3">
-                <span><?= htmlspecialchars($car['gear']) ?></span>
-                <span><?= htmlspecialchars($car['fuel']) ?></span>
-            </div>
-            <div class="border-t pt-3">
-                <div class="flex justify-between items-center mb-2">
-                    <div>
-                        <span class="text-2xl font-bold text-gold">MAD<?= number_format((float)$car['price_day']) ?></span>
-                        <span class="text-sm text-gray-500">/day</span>
-                    </div>
-                    <a href="car-detail.php?id=<?= (int)$car['id'] ?>"
-                       class="bg-gold hover:bg-gold-dark text-white text-sm font-medium py-2 px-4 rounded-lg transition">
-                        View Details
-                    </a>
+
+        <!-- Card Body -->
+        <div class="px-5 pb-5 sm:px-6 sm:pb-6 flex-1 flex flex-col">
+            <h3 class="text-xl sm:text-2xl font-extrabold text-gray-800 mb-2 text-center line-clamp-1">
+                <?= htmlspecialchars($car['name']) ?>
+            </h3>
+
+            <!-- Specs Icons -->
+            <div class="flex justify-center gap-6 sm:gap-8 text-gray-600 mb-4 text-xs sm:text-sm">
+                <div class="flex flex-col items-center">
+                    <svg class="w-5 h-5 mb-1 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                    </svg>
+                    <span class="font-medium"><?= (int)$car['seats'] ?> Seats</span>
                 </div>
-                <div class="text-xs text-gray-400">
-                    Week: MAD<?= number_format((float)$car['price_week']) ?> |
-                    Month: MAD<?= number_format((float)$car['price_month']) ?>
+                <div class="flex flex-col items-center">
+                    <svg class="w-5 h-5 mb-1 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M5 3h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                    </svg>
+                    <span class="font-medium"><?= (int)$car['bags'] ?> Bags</span>
                 </div>
+            </div>
+
+            <!-- Transmission & Fuel -->
+            <div class="flex justify-center gap-4 text-xs text-gray-500 mb-5 font-medium">
+                <span class="px-3 py-1 bg-gray-100 rounded-full"><?= htmlspecialchars($car['gear']) ?></span>
+                <span class="px-3 py-1 bg-gray-100 rounded-full"><?= htmlspecialchars($car['fuel']) ?></span>
+            </div>
+
+            <!-- LUXURY PRICE – MAD BESIDE /day -->
+            <div class="flex flex-col items-center mt-4 mb-3">
+                <div class="flex items-baseline gap-2">
+                    <span class="text-4xl sm:text-5xl font-extrabold text-gray-900">
+                        <?= number_format((float)$car['price_day']) ?>
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-white bg-gradient-to-r from-gold to-yellow-600 rounded-full shadow-md animate-pulse">
+                        <span>MAD</span>
+                        <span>/day</span>
+                    </span>
+                </div>
+                <div class="flex gap-3 mt-3 text-xs text-gray-500 font-medium">
+                    <span class="px-3 py-1 bg-gray-100 rounded-full border border-gray-200">
+                        Week: <strong class="text-gray-700">MAD<?= number_format((float)$car['price_week']) ?></strong>
+                    </span>
+                    <span class="px-3 py-1 bg-gray-100 rounded-full border border-gray-200">
+                        Month: <strong class="text-gray-700">MAD<?= number_format((float)$car['price_month']) ?></strong>
+                    </span>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="mt-auto">
+                <a href="car-detail.php?id=<?= (int)$car['id'] ?>"
+                   class="block w-full text-center bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-600 hover:to-orange-500 
+                          text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 
+                          transform hover:scale-105 active:scale-95">
+                    View Details
+                </a>
             </div>
         </div>
     </div>
@@ -219,7 +251,6 @@ include 'header.php';
         to { transform: rotate(360deg); }
     }
 
-    /* Ensure form doesn't overflow */
     #filter-form {
         display: grid;
         gap: 0.75rem;
@@ -234,7 +265,6 @@ include 'header.php';
 <script>
     AOS.init({ once: true, duration: 800, easing: 'ease-out-quart' });
 
-    // Elements
     const els = {
         search: document.getElementById('search'),
         gear:   document.getElementById('gear'),
@@ -287,13 +317,11 @@ include 'header.php';
         }, 300);
     };
 
-    // Event Listeners
     els.search.addEventListener('input', fetchCars);
     els.gear.addEventListener('change', fetchCars);
     els.fuel.addEventListener('change', fetchCars);
     els.sort.addEventListener('change', fetchCars);
 
-    // Optional: Auto-run on load if URL has filters
     document.addEventListener('DOMContentLoaded', () => {
         const hasFilters = ['search', 'gear', 'fuel', 'sort'].some(p => 
             new URLSearchParams(window.location.search).has(p)
