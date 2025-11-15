@@ -191,15 +191,6 @@
         <!-- CTA Buttons -->
         <div data-aos="fade-up" data-aos-delay="1200" class="flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#cars" 
-               class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-orange-400 
-                      text-white font-bold text-lg py-4 px-10 rounded-full shadow-2xl transform transition-all duration-300 
-                      hover:scale-110 hover:shadow-gold/50 active:scale-95">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-                Browse Luxury Cars
-            </a>
-            <a href="booking.php" 
                class="inline-flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md border-2 border-gold/50 
                       text-gold hover:bg-gold/10 font-bold text-lg py-4 px-10 rounded-full shadow-xl 
                       transform transition-all duration-300 hover:scale-110 hover:shadow-gold/30">
